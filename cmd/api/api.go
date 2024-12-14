@@ -1,33 +1,39 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type app struct {
-	config config
+	config         config
+	productService *ProductService
 }
 
 type config struct {
 	addr string
 }
 
-func (a *app) start(mux *http.ServeMux) error {
-	
-	server := &http.Server{
-		Addr: a.config.addr,
-		Handler: mux,
+func NewApp(cfg config, productService *ProductService) *app {
+	return &app{
+		config:         cfg,
+		productService: productService,
 	}
-	
-	return server.ListenAndServe()
 }
 
 func (a *app) NewMux() *http.ServeMux {
 	mux := http.NewServeMux()
-	
-	mux.HandleFunc("GET /products", a.getProducts)
 
-	return mux;
+	mux.HandleFunc("GET /products", a.getProductsHandler)
+
+	return mux
 }
 
-func (a *app) getProducts(w http.ResponseWriter, r *http.Request){
-	w.Write([]byte("ok"))
+func (a *app) start(mux *http.ServeMux) error {
+
+	server := &http.Server{
+		Addr:    a.config.addr,
+		Handler: mux,
+	}
+
+	return server.ListenAndServe()
 }

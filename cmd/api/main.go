@@ -8,9 +8,9 @@ func main() {
 		addr: ":8080",
 	}
 
-	app := &app{
-		config: cfg,
-	}
+	memRepository := &MemRepository{}
+	productService := NewProductService(memRepository)
+	app := NewApp(cfg, productService)
 
 	mux := app.NewMux()
 
