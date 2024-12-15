@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"math"
+
+	"github.com/esnchez/mytheresa/internal/store"
 )
 
 var currency = "EUR"
@@ -20,9 +22,9 @@ func NewProductService(store Store, discounter map[string]float64) *ProductServi
 	}
 }
 
-func (p *ProductService) GetProducts(ctx context.Context) ([]*DiscountedProduct, error) {
+func (p *ProductService) GetProducts(ctx context.Context, pag store.Pagination) ([]*DiscountedProduct, error) {
 
-	products, err := p.store.GetProductList(ctx)
+	products, err := p.store.GetProductList(ctx, pag)
 	if err != nil {
 		return nil, err
 	}

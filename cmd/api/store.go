@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/esnchez/mytheresa/internal/store"
 )
 
 type Store interface {
-	GetProductList(context.Context) ([]*Product, error)
+	GetProductList(context.Context, store.Pagination) ([]*Product, error)
 }
 
 type PostgresRepository struct {
@@ -15,13 +17,11 @@ type PostgresRepository struct {
 }
 
 //TODO: implement final SQL query
-func (ps *PostgresRepository) GetProductList(ctx context.Context) ([]*Product, error) {
+func (ps *PostgresRepository) GetProductList(ctx context.Context, pag store.Pagination) ([]*Product, error) {
 
-	query := `
-		SELECT * FROM products
-	`
+	query, args := GetQueryWithFilter(pag)
 
-	rows, err := ps.db.QueryContext(ctx, query)
+	rows, err := ps.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("query db error: %w", err)
 	}
@@ -41,6 +41,25 @@ func (ps *PostgresRepository) GetProductList(ctx context.Context) ([]*Product, e
 	}
 
 	return products, nil
+}
+
+func GetQueryWithFilter(pag store.Pagination) (string, []any) {
+	args := []interface{}{}
+	argIndex := 1
+
+	query := `
+		SELECT id, sku, product_name, category, price FROM products
+	`
+	if pag.Filter != ""{
+		query += fmt.Sprintf(" WHERE category = $%d", argIndex)
+		args = append(args, pag.Filter)
+		argIndex++
+	}
+
+	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
+	args = append(args, pag.Limit, pag.Offset)
+
+	return query, args
 }
 
 type MemRepository struct{}
