@@ -19,7 +19,7 @@ type PostgresRepository struct {
 //TODO: implement final SQL query
 func (ps *PostgresRepository) GetProductList(ctx context.Context, pag store.Pagination) ([]*Product, error) {
 
-	query, args := GetQueryWithFilters(pag)
+	query, args := getQueryWithFilters(pag)
 
 	rows, err := ps.db.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -43,7 +43,7 @@ func (ps *PostgresRepository) GetProductList(ctx context.Context, pag store.Pagi
 	return products, nil
 }
 
-func GetQueryWithFilters(pag store.Pagination) (string, []any) {
+func getQueryWithFilters(pag store.Pagination) (string, []any) {
 	args := []interface{}{}
 	argIndex := 1
 	clauses := []string{}
