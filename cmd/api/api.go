@@ -11,6 +11,11 @@ type app struct {
 
 type config struct {
 	addr string
+	dbConfig dbConfig
+}
+
+type dbConfig struct {
+	addr string
 }
 
 func NewApp(cfg config, productService *ProductService) *app {
