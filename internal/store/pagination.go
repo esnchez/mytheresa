@@ -1,20 +1,20 @@
 package store
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 )
 
 var paginationMaxLimit = 5
 
-type Pagination struct{
-	Limit int
-	Offset int
-	Filter string
+type Pagination struct {
+	Limit         int
+	Offset        int
+	Filter        string
+	PriceLessThan int
 }
 
-func (p Pagination) ParseFromRequest(r *http.Request) (Pagination, error){
+func (p Pagination) ParseFromRequest(r *http.Request) (Pagination, error) {
 	queryString := r.URL.Query()
 
 	limit := queryString.Get("limit")
@@ -24,11 +24,11 @@ func (p Pagination) ParseFromRequest(r *http.Request) (Pagination, error){
 			return p, nil
 		}
 		//TODO: struct validation for max/min values
-		if (lim < paginationMaxLimit){
+		if lim < paginationMaxLimit {
 			p.Limit = lim
 		}
 	}
-	
+
 	offset := queryString.Get("offset")
 	if offset != "" {
 		off, err := strconv.Atoi(offset)
@@ -43,6 +43,14 @@ func (p Pagination) ParseFromRequest(r *http.Request) (Pagination, error){
 		p.Filter = category
 	}
 
-	log.Println(p.Filter)
+	price := queryString.Get("priceLessThan")
+	if price != "" {
+		pri, err := strconv.Atoi(price)
+		if err != nil {
+			return p, nil
+		}
+		p.PriceLessThan = pri
+	}
+
 	return p, nil
 }

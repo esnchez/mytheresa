@@ -19,7 +19,7 @@ type PostgresRepository struct {
 //TODO: implement final SQL query
 func (ps *PostgresRepository) GetProductList(ctx context.Context, pag store.Pagination) ([]*Product, error) {
 
-	query, args := GetQueryWithFilter(pag)
+	query, args := GetQueryWithFilters(pag)
 
 	rows, err := ps.db.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -43,23 +43,46 @@ func (ps *PostgresRepository) GetProductList(ctx context.Context, pag store.Pagi
 	return products, nil
 }
 
-func GetQueryWithFilter(pag store.Pagination) (string, []any) {
+func GetQueryWithFilters(pag store.Pagination) (string, []any) {
 	args := []interface{}{}
 	argIndex := 1
+	clauses := []string{}
 
 	query := `
 		SELECT id, sku, product_name, category, price FROM products
 	`
 	if pag.Filter != ""{
-		query += fmt.Sprintf(" WHERE category = $%d", argIndex)
+		clauses = append(clauses, fmt.Sprintf("category = $%d", argIndex))
 		args = append(args, pag.Filter)
 		argIndex++
 	}
 
+	if pag.PriceLessThan != 0 {
+		clauses = append(clauses, fmt.Sprintf("price <= $%d", argIndex))
+		args = append(args, pag.PriceLessThan)
+		argIndex++
+	}
+
+	if len(clauses) > 0 {
+		query += " WHERE " + joinClauses(clauses)
+	}
+	
 	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
 	args = append(args, pag.Limit, pag.Offset)
 
 	return query, args
+}
+
+func joinClauses(clauses []string) string {
+	result := ""
+	
+	for i, clause := range clauses {
+		if i > 0 {
+			result += " AND "
+		}
+		result += clause
+	}
+	return result
 }
 
 type MemRepository struct{}
