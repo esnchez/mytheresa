@@ -13,6 +13,7 @@ Other remarkable considerations taken:
 - Discounts are loaded in memory into a map for faster lookups
 - Populating database with Postgres init scripts
 - Minimize external dependencies, leverage standard library
+- Migrations and PGAdmin were included for demonstration purposes. Used during development. 
 
 From the root folder, 
 
