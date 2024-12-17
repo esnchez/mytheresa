@@ -65,7 +65,6 @@ func (a *App) Start(mux *http.ServeMux) error {
 		shutdownCh <- server.Shutdown(ctx)
 	}()
 
-
 	log.Printf("server running on port: %s", a.Config.Addr)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		return err

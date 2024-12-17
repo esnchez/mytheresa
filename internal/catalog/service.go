@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 	"math"
-
-	u "github.com/esnchez/mytheresa/internal/utils"
 )
 
 var currency = "EUR"
 
 type Service interface {
-	GetProducts(ctx context.Context, pag u.Pagination) ([]*DiscountedProduct, error)
+	GetProducts(ctx context.Context, pag Pagination) ([]*DiscountedProduct, error)
 }
 
 type ProductService struct {
@@ -26,7 +24,7 @@ func NewProductService(store Store, discounter map[string]float64) *ProductServi
 	}
 }
 
-func (p *ProductService) GetProducts(ctx context.Context, pag u.Pagination) ([]*DiscountedProduct, error) {
+func (p *ProductService) GetProducts(ctx context.Context, pag Pagination) ([]*DiscountedProduct, error) {
 
 	products, err := p.store.GetProductList(ctx, pag)
 	if err != nil {
@@ -36,7 +34,6 @@ func (p *ProductService) GetProducts(ctx context.Context, pag u.Pagination) ([]*
 	discountedProducts := p.ApplyDiscounts(products)
 
 	return discountedProducts, nil
-
 }
 
 func (p *ProductService) ApplyDiscounts(products []*Product) []*DiscountedProduct {

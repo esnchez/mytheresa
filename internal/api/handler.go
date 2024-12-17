@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	u "github.com/esnchez/mytheresa/internal/utils"
+	c "github.com/esnchez/mytheresa/internal/catalog"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -11,7 +11,7 @@ var Validate *validator.Validate
 
 func (a *App) getProductsHandler(w http.ResponseWriter, r *http.Request) {
 
-	pag := u.Pagination{
+	pag := c.Pagination{
 		Limit:  5,
 		Offset: 0,
 	}

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	c "github.com/esnchez/mytheresa/internal/catalog"
-	u "github.com/esnchez/mytheresa/internal/utils"
 )
 
 func TestGetProductsHandler(t *testing.T) {
@@ -25,7 +24,7 @@ func TestGetProductsHandler(t *testing.T) {
 			name: "valid request without pagination",
 			mockService: func() c.Service {
 				return &c.MockProductService{
-					MockGetProducts: func(ctx context.Context, pag u.Pagination) ([]*c.DiscountedProduct, error) {
+					MockGetProducts: func(ctx context.Context, pag c.Pagination) ([]*c.DiscountedProduct, error) {
 						return []*c.DiscountedProduct{
 							{SKU: "0001", Name: "Product 1"},
 							{SKU: "0002", Name: "Product 2"},
@@ -44,7 +43,7 @@ func TestGetProductsHandler(t *testing.T) {
 			name: "valid request with pagination",
 			mockService: func() c.Service {
 				return &c.MockProductService{
-					MockGetProducts: func(ctx context.Context, pag u.Pagination) ([]*c.DiscountedProduct, error) {
+					MockGetProducts: func(ctx context.Context, pag c.Pagination) ([]*c.DiscountedProduct, error) {
 						return []*c.DiscountedProduct{
 							{SKU: "0001", Name: "Product 1"},
 							{SKU: "0002", Name: "Product 2"},
@@ -63,7 +62,7 @@ func TestGetProductsHandler(t *testing.T) {
 			name: "service error",
 			mockService: func() c.Service {
 				return &c.MockProductService{
-					MockGetProducts: func(ctx context.Context, pag u.Pagination) ([]*c.DiscountedProduct, error) {
+					MockGetProducts: func(ctx context.Context, pag c.Pagination) ([]*c.DiscountedProduct, error) {
 						return nil, errors.New("internal server error")
 					},
 				}

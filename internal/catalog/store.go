@@ -5,16 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-
-	u "github.com/esnchez/mytheresa/internal/utils"
 )
 
-var (
-	QueryTimeout = time.Second * 5
-)
+var queryTimeout = time.Second * 5
 
 type Store interface {
-	GetProductList(context.Context, u.Pagination) ([]*Product, error)
+	GetProductList(context.Context, Pagination) ([]*Product, error)
 }
 
 type PostgresRepository struct {
@@ -27,11 +23,11 @@ func NewPostgresRepository(db *sql.DB) *PostgresRepository {
 	}
 }
 
-func (ps *PostgresRepository) GetProductList(ctx context.Context, pag u.Pagination) ([]*Product, error) {
+func (ps *PostgresRepository) GetProductList(ctx context.Context, pag Pagination) ([]*Product, error) {
 
 	query, args := getQueryWithFilters(pag)
 
-	ctx, cancel := context.WithTimeout(ctx, QueryTimeout)
+	ctx, cancel := context.WithTimeout(ctx, queryTimeout)
 	defer cancel()
 
 	rows, err := ps.db.QueryContext(ctx, query, args...)
@@ -56,7 +52,7 @@ func (ps *PostgresRepository) GetProductList(ctx context.Context, pag u.Paginati
 	return products, nil
 }
 
-func getQueryWithFilters(pag u.Pagination) (string, []any) {
+func getQueryWithFilters(pag Pagination) (string, []any) {
 	args := []interface{}{}
 	argIndex := 1
 	clauses := []string{}
