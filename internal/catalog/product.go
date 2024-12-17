@@ -1,4 +1,4 @@
-package main
+package catalog
 
 type Product struct {
 	ID       int

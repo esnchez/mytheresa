@@ -1,14 +1,18 @@
-package main
+package catalog
 
 import (
 	"context"
 	"fmt"
 	"math"
 
-	"github.com/esnchez/mytheresa/internal/store"
+	u "github.com/esnchez/mytheresa/internal/utils"
 )
 
 var currency = "EUR"
+
+type Service interface {
+	GetProducts(ctx context.Context, pag u.Pagination) ([]*DiscountedProduct, error)
+}
 
 type ProductService struct {
 	store      Store
@@ -22,7 +26,7 @@ func NewProductService(store Store, discounter map[string]float64) *ProductServi
 	}
 }
 
-func (p *ProductService) GetProducts(ctx context.Context, pag store.Pagination) ([]*DiscountedProduct, error) {
+func (p *ProductService) GetProducts(ctx context.Context, pag u.Pagination) ([]*DiscountedProduct, error) {
 
 	products, err := p.store.GetProductList(ctx, pag)
 	if err != nil {

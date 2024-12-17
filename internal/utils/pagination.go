@@ -1,14 +1,12 @@
-package store
+package utils
 
 import (
 	"net/http"
 	"strconv"
 )
 
-var paginationMaxLimit = 5
-
 type Pagination struct {
-	Limit         int
+	Limit         int `validate:"required,gt=0,lte=5"`
 	Offset        int
 	Filter        string
 	PriceLessThan int
@@ -23,10 +21,7 @@ func (p Pagination) ParseFromRequest(r *http.Request) (Pagination, error) {
 		if err != nil {
 			return p, nil
 		}
-		//TODO: struct validation for max/min values
-		if lim < paginationMaxLimit {
-			p.Limit = lim
-		}
+		p.Limit = lim
 	}
 
 	offset := queryString.Get("offset")
