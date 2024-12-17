@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var queryTimeout = time.Second * 5
+var queryTimeout = 5*time.Second
 
 type Store interface {
 	GetProductList(context.Context, Pagination) ([]*Product, error)

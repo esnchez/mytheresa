@@ -3,6 +3,7 @@ package catalog
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 )
 
@@ -28,6 +29,7 @@ func (p *ProductService) GetProducts(ctx context.Context, pag Pagination) ([]*Di
 
 	products, err := p.store.GetProductList(ctx, pag)
 	if err != nil {
+		log.Printf("error: %s", err.Error())
 		return nil, err
 	}
 

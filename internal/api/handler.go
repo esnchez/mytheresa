@@ -34,7 +34,7 @@ func (a *App) getProductsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := writeJSON(w, http.StatusOK, products); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		a.internalServerError(w)
 		return
 	}
 }
