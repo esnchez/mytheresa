@@ -1,8 +1,13 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	c "github.com/esnchez/mytheresa/internal/catalog"
 )
@@ -43,6 +48,33 @@ func (a *App) Start(mux *http.ServeMux) error {
 		Handler: mux,
 	}
 
+	shutdownCh := make(chan error)
+
+	go func() {
+
+		quit := make(chan os.Signal, 1)
+		
+		signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)	
+		s :=<- quit
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		log.Println("terminate signal: ", s.String())
+		
+		shutdownCh <- server.Shutdown(ctx)
+	}()
+
+
 	log.Printf("server running on port: %s", a.Config.Addr)
-	return server.ListenAndServe()
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		return err
+	}
+
+	err := <- shutdownCh
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

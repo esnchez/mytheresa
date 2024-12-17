@@ -18,20 +18,17 @@ func (a *App) getProductsHandler(w http.ResponseWriter, r *http.Request) {
 
 	pag, err := pag.ParseFromRequest(r)
 	if err != nil {
-		// http.Error(w, err.Error(), http.StatusBadRequest)
 		a.badRequest(w, err.Error())
 		return
 	}
 
 	if err := Validate.Struct(pag); err != nil {
-		// http.Error(w, err.Error(), http.StatusBadRequest)
 		a.badRequest(w, err.Error())
 		return
 	}
 
 	products, err := a.Products.GetProducts(r.Context(), pag)
 	if err != nil {
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		a.internalServerError(w)
 		return
 	}
