@@ -3,22 +3,20 @@ package main
 import (
 	"log"
 
-	c "github.com/esnchez/mytheresa/internal/catalog"
-	"github.com/esnchez/mytheresa/internal/db"
 	a "github.com/esnchez/mytheresa/internal/api"
+	c "github.com/esnchez/mytheresa/internal/catalog"
+	"github.com/esnchez/mytheresa/internal/config"
+	"github.com/esnchez/mytheresa/internal/db"
 )
 
 func main() {
-
-	//load config from env, config pkg?
-	cfg := a.Config{
-		Addr: ":8080",
-		DbConfig: a.DbConfig{
-			Addr: "postgres://admin:admin@localhost/catalog?sslmode=disable",
-		},
+	
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("error loading configuration: %v", err)
 	}
 
-	db, err := db.New(cfg.DbConfig.Addr)
+	db, err := db.New(cfg.DBAddress)
 	if err != nil {
 		log.Panic(err)
 	}

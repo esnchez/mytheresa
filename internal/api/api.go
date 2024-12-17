@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,23 +11,15 @@ import (
 	"time"
 
 	c "github.com/esnchez/mytheresa/internal/catalog"
+	"github.com/esnchez/mytheresa/internal/config"
 )
 
 type App struct {
-	Config   Config
+	Config   *config.Config
 	Products c.Service
 }
 
-type Config struct {
-	Addr     string
-	DbConfig DbConfig
-}
-
-type DbConfig struct {
-	Addr string
-}
-
-func NewApp(cfg Config, service c.Service) *App {
+func NewApp(cfg *config.Config, service c.Service) *App {
 	return &App{
 		Config:   cfg,
 		Products: service,
@@ -44,7 +37,7 @@ func (a *App) NewMux() *http.ServeMux {
 func (a *App) Start(mux *http.ServeMux) error {
 
 	server := &http.Server{
-		Addr:    a.Config.Addr,
+		Addr:    fmt.Sprintf(":%s",a.Config.Port),
 		Handler: mux,
 	}
 
@@ -65,7 +58,7 @@ func (a *App) Start(mux *http.ServeMux) error {
 		shutdownCh <- server.Shutdown(ctx)
 	}()
 
-	log.Printf("server running on port: %s", a.Config.Addr)
+	log.Printf("server running on port: %s", a.Config.Port)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		return err
 	}
