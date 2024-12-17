@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  api:
+    container_name: mytheresa-api
+    build:
+      context: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: admin
+      DB_PASSWORD: admin
+      DB_NAME: catalog
+      DB_DRIVER: postgres
+    ports:
+      - "8080:8080"
+
   db:
     image: postgres:16
     container_name: postgres-db
@@ -10,6 +26,7 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - db-data:/var/lib/postgressql/data
+      - ./scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
       
