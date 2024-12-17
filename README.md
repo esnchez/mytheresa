@@ -11,8 +11,8 @@ Other remarkable considerations taken:
 - Timeouts on database query
 - Retry on database connection
 - Discounts are loaded in memory into a map for faster lookups
-- Populating database with Postgres init scripts 
-
+- Populating database with Postgres init scripts
+- Minimize external dependencies, leverage standard library
 
 From the root folder, 
 
